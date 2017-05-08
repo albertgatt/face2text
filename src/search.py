@@ -278,12 +278,12 @@ class ImageCaptionScraper(object):
 		# See in the config.cfg file for possible values
 		config = {
 			'keyword': kw, # :D hehe have fun my dear friends
-			'search_engines': self.search_engines, # duckduckgo not supported
+			'search_engines': self.search_engines, 
 			'search_type': 'image',
 			'scrape_method': 'selenium',
+			'sel_browser': 'phantomjs',
 			'do_caching': False,
 			'output_filename': json_file,
-
 		}
 
 		try:
@@ -405,10 +405,13 @@ class ImageCaptionScraper(object):
 if __name__ == "__main__":
 	ics = ImageCaptionScraper()
 	ics.init_browser()
-	ics.target_directory = '../images/'
+	ics.target_directory = '../output/images/'
 	ics.search_engines = ['google', 'bing', 'yahoo'] #yandex
-	ics.find_text_for_images('../output/test.json', '../output/test_out.json', related_tags=True, visit_similar=True)
+
+	#Procedure:
+	#1. Find images for tags
+	#ics.find_images('../output/goatee-glasses.json', 'goatee', 'glasses')
 	
-
-
-
+	#2. For each image, google similar images and retrieve text
+	ics.find_text_for_images('../output/goatee-glasses.json', '../output/goatee-glasses.out.json', related_tags=True, visit_similar=True)
+	
