@@ -5,3 +5,5 @@ requests
 PyMySql
 sqlalchemy
 aiohttp
+nltk
+GoogleScraper

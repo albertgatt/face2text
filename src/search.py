@@ -3,13 +3,12 @@
 
 from GoogleScraper import scrape_with_config, GoogleSearchError
 from selenium.webdriver.common.keys import Keys
-#from boilerpipe.extract import Extractor
 from selenium import webdriver
-from subprocess import call
 from selenium.common.exceptions import NoSuchElementException
 from bs4 import BeautifulSoup, Comment
-import threading,requests, os, urllib, sys, json, re
-
+import threading,requests, os, urllib, sys, json, re, jpype
+from boilerpipe.extract import Extractor
+from subprocess import call
 
 # simulating a image search for all search engines that support image search.
 # Then download all found images :)
@@ -56,21 +55,33 @@ class FetchResource(threading.Thread):
 	def run(self):
 		self.results = {}
 		i = 0
+
 		for url in self.urls:
 			i+=1
-			url = urllib.parse.unquote(url)
-			
+			url = urllib.parse.unquote(url)			
+
 			try:				
-				content = requests.get(url).content
+				# content = requests.get(url).content
+				content = None
 
 				if self.get_text:
-					soup = BeautifulSoup(content, 'lxml', from_encoding='utf-8')
-					text = self._visibile_text(soup)
+					#Monkey patch for JVM crash
+					#See: https://github.com/misja/python-boilerpipe/issues/17
+					if not jpype.isThreadAttachedToJVM():           
+						jpype.attachThreadToJVM()
+
+					ext = Extractor(extractor='DefaultExtractor', url=url)
+					# soup = BeautifulSoup(content, 'lxml', from_encoding='utf-8')
+					# text = self._visibile_text(soup)
+					content = ext.getText()
 					
-					if text and len(text) > 0:					
+					if content and len(content) > 0:					
 						self.results[i] = {}
 						self.results[i]['url'] = url
-						self.results[i]['text'] = str(text)
+						self.results[i]['text'] = content
+
+				else:
+					content = requests.get(url).content
 
 				if self.target:
 					self.save(url, content)
@@ -251,7 +262,7 @@ class ImageCaptionScraper(object):
 			'search_engines': self.search_engines,
 			'num_pages_for_keyword': 1,
 			'scrape_method': 'selenium',
-			'sel_browser': 'Phantomjs',	
+			'sel_browser': 'phantomjs',	
 			'print_results': 'summarize',		
 		}
 
@@ -333,7 +344,7 @@ class ImageCaptionScraper(object):
 			except:
 				continue
 
-		threads = self.__make_threads(urls, False, True)		
+		threads = self.__make_threads(urls, False, True)				
 		return self._merge_results(threads)	
 
 
@@ -363,40 +374,47 @@ class ImageCaptionScraper(object):
 		
 		with open(json_file, 'r', encoding='utf-8') as im_search:
 			js = json.loads(im_search.read())
-			
+			resultcount = 0
+
 			#jsfile is a list of dicts
 			for resultset in js:
 				jsdict = resultset['results']
 
 				for result in jsdict:
-					im_search_results = {} #store text results here
-					link = result['link']												
+					resultcount += 1
+					print("PROCESSING RESULT: " + str(resultcount))
 
-					#Get google's guess for the actual search query, plus similar images					
-					(vis_sim, google_exp) = self._search_by_image_url(link) #google's best guess for the images found
-					google_exp = google_exp.strip()
-					im_search_results['google_expansion'] = google_exp				
-					im_search_results['similar_img_url'] = vis_sim
+					try:
+						im_search_results = {} #store text results here
+						link = result['link']												
 
-					if related_tags:
-						im_search_results['ranked_google_rel_tags'] = self.extract_related_google_tags(vis_sim)
-					
-					if visit_similar:
-						sim_texts = self.google_similar_image_text(vis_sim)
-						im_search_results['similar_img_text'] = sim_texts
-					
-					if len(google_exp) == 0:
-						im_search_results['success'] = False
+						#Get google's guess for the actual search query, plus similar images					
+						(vis_sim, google_exp) = self._search_by_image_url(link) #google's best guess for the images found
+						google_exp = google_exp.strip()
+						im_search_results['google_expansion'] = google_exp				
+						im_search_results['similar_img_url'] = vis_sim
 
-					else:
-						#3. Now, we search for the google expansion and retrieve text
-						text_results = self.find_pages(False, google_exp)
-						im_search_results['text_query_results'] = text_results
-						im_search_results['success'] = len(text_results) > 0
-						print("\t Retrieved related text")
-					
-					# #4 And now save the text results
-					result['expanded_search'] = im_search_results
+						if related_tags:
+							im_search_results['ranked_google_rel_tags'] = self.extract_related_google_tags(vis_sim)
+						
+						if visit_similar:
+							sim_texts = self.google_similar_image_text(vis_sim)
+							im_search_results['similar_img_text'] = sim_texts
+						
+						if len(google_exp) == 0:
+							im_search_results['success'] = False
+
+						else:
+							#3. Now, we search for the google expansion and retrieve text
+							text_results = self.find_pages(False, google_exp)
+							im_search_results['text_query_results'] = text_results
+							im_search_results['success'] = len(text_results) > 0
+							print("\t RETRIEVED TEXT")
+						
+						# #4 And now save the text results
+						result['expanded_search'] = im_search_results
+					except:
+						continue
 
 		with open(out_file, 'w', encoding="utf-8") as outfile:
 			json.dump(js, outfile, indent=4)
@@ -413,5 +431,5 @@ if __name__ == "__main__":
 	#ics.find_images('../output/goatee-glasses.json', 'goatee', 'glasses')
 	
 	#2. For each image, google similar images and retrieve text
-	ics.find_text_for_images('../output/goatee-glasses.json', '../output/goatee-glasses.out.json', related_tags=True, visit_similar=True)
+	ics.find_text_for_images('../output/test.json', '../output/test_out.json', related_tags=True, visit_similar=True)
 	
