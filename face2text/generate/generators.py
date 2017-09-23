@@ -29,7 +29,8 @@ class Generator(object):
     
 class SimpleGenerator(Generator):
     def __init__(self, synonyms=True, negation=False):
-        super().__init__()
+        #super().__init__()
+        super(SimpleGenerator, self).__init__()
         self.__syn = synonyms
         self.realiser = realiser.Realiser(use_synonyms=self.__syn)
         self.lexicaliser = lexicon.Lexicaliser()
@@ -70,8 +71,7 @@ class SimpleGenerator(Generator):
             if a.semcat in features:
                 features[a.semcat].append(a)                
             else:
-                features[a.semcat] = [a]
-            
+                features[a.semcat] = [a]    
             
         #We need to know the gender (determines pronouns and attributes)
         if 'GENDER' in features:
@@ -100,7 +100,8 @@ class RetrievalGenerator(Generator):
     '''Abstract class for retrieval-based generation. Requries a json file with texts for a given set of attributes.'''
     
     def __init__(self, json_file, stopwords=stopwords.words("english"), min_length=5):
-        super().__init__()
+        #super().__init__()
+        super(RetrievalGenerator, self).__init__()
         self.min_text_length = min_length
         self.sentence_splitter = nltkload('tokenizers/punkt/{0}.pickle'.format('english'))
         self.__stopwords = []
@@ -188,7 +189,8 @@ class RetrievalGenerator(Generator):
 
 class Phrase2VecGenerator(RetrievalGenerator):
     def __init__(self, json_file, path_to_w2vec=None):
-        super().__init__(json_file)
+        #super().__init__(json_file)
+        super(Phrase2VecGenerator, self).__init__(json_file)
         self.__path = None
         self.__model = None        
         
@@ -254,7 +256,8 @@ class Phrase2VecGenerator(RetrievalGenerator):
 class FrequencyDistGenerator(RetrievalGenerator):
     
     def __init__(self, json_file):
-        super().__init__(json_file)
+        #super().__init__(json_file)
+        super(FrequencyDistGenerator, self).__init__(json_file)
         self.__global_dist = FreqDist()
         self.__text_smoothed_dists = []
         self.__global_smoothed_dist = None

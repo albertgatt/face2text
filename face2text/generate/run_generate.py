@@ -35,7 +35,7 @@ def template_generate_from_file(sample_file, outfile):
             for line in classifications.readlines():
                 string_atts = [x.strip() for x in line.split(sep)]
                 image = string_atts[0]
-                attributes = {a:v for (a,v) in zip(ATT_LIST, string_atts[1:])}
+                attributes = {a:int(v) for (a,v) in zip(ATT_LIST, string_atts[1:])}
                 phrase = generator.generate(attributes)                   
                 output.write(image + "\t" + phrase + "\n") 
 
@@ -45,7 +45,7 @@ def generate_from_attributes(attributes):
     generator = SimpleGenerator() #Instantiate a simple (template) generator  
     
     #Uncomment the below if we don't want to allow random synonym choice ('plump' for 'chubby', etc)
-    generator.synonyms = True
+    generator.synonyms = False
     
         
     #Add things to this list that we NEVER want to use in a description
@@ -59,3 +59,28 @@ def generate_from_attributes(attributes):
 #sim_generate_from_file('../output/goatee-glasses.json',  '../models/GoogleNews-vectors-negative300.bin', 'goatee glasses')  
 #freq_generate_from_file('../output/goatee-glasses.json', 'goatee glasses')    
 #template_generate_from_file('../output/attribute classifier - LFW Sample.txt', '../output/generated - LFW Sample 2.txt')
+
+test_dict1 = {'Sideburns': 1.0, 'Black_Hair': 1.0, 'Wavy_Hair': -1.0,
+                'Young': 1.0, 'Heavy_Makeup': 1.0, 'Blond_Hair': -1.0,
+                'Wearing_Necktie': -1.0, 'Blurry': -1.0, 'Double_Chin': -1.0,
+                'Brown_Hair': -1.0, 'Goatee': 1.0, 'Bald': 1.0, 'Gray_Hair':
+                1.0, 'Pale_Skin': -1.0, 'Wearing_Hat': 1.0, 'Receding_Hairline':
+                1.0, 'Straight_Hair': 1.0, 'Rosy_Cheeks': -1.0, 'Bangs': -1.0,
+                'Male': 1.0, 'Mustache': 1.0, 'No_Beard': -1.0, 'Eyeglasses':
+                -1.0, 'Wearing_Lipstick': 1.0, 'Narrow_Eyes': -1.0, 'Chubby':
+                1.0, 'Smiling': -1.0, 'Bushy_Eyebrows': 1.0}
+    
+test_dict2 = {'Sideburns': -1.0, 'Black_Hair': 1.0, 'Wavy_Hair': -1.0,
+                'Young': 1.0, 'Heavy_Makeup': 1.0, 'Blond_Hair': -1.0,
+                'Wearing_Necktie': -1.0, 'Blurry': -1.0, 'Double_Chin': -1.0,
+                'Brown_Hair': -1.0, 'Goatee': -1.0, 'Bald': 1.0, 'Gray_Hair':
+                -1.0, 'Pale_Skin': -1.0, 'Wearing_Hat': -1.0,
+                'Receding_Hairline': 1.0, 'Straight_Hair': 1.0, 'Rosy_Cheeks':
+                -1.0, 'Bangs': 1.0, 'Male': -1.0, 'Mustache': -1.0,
+                'No_Beard': 1.0, 'Eyeglasses': -1.0, 'Wearing_Lipstick': 1.0,
+                'Narrow_Eyes': -1.0, 'Chubby': -1.0, 'Smiling': -1.0,
+                'Bushy_Eyebrows': 1.0}
+    
+test_dict3 = {'Wearing_Hat':1}
+    
+print(generate_from_attributes(test_dict3))

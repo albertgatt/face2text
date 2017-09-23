@@ -90,19 +90,21 @@ class Realiser(object):
             return 'a'    
 
     def generate_vp(self, atts, v):
-        if len(atts) == 0:
-            return ''
+        result = '' 
+        phrase = ''
         
-        expressed = [a.express(self.syn) for a in atts]
-        phrase = '' 
+        if len(atts) > 0:        
+            expressed = [a.express(self.syn) for a in atts]    
+                
+            if len(expressed) > 1:
+                phrase = self.conjoin(expressed)
+            else:
+                phrase = expressed[0]                        
+                
+            result = self.vp.substitute(verb=v, np=phrase)
             
-        if len(expressed) > 1:
-            phrase = self.conjoin(expressed)
-        else:
-            phrase = expressed[0]                        
-            
-        return self.vp.substitute(verb=v, np=phrase)
-    
+        return result
+        
     def generate_pp(self, atts, p):
         
         if len(atts) == 0:
@@ -145,7 +147,7 @@ class Realiser(object):
         for a in semtypes:
             if a in features:
                 atts = atts + features[a]
-
+                
         pronoun = 'They'
         aux = 'are'
         
@@ -155,9 +157,10 @@ class Realiser(object):
         elif gender == 'woman':
             pronoun = 'She'
             aux = 'is'
-            
+
+    
         phrase = self.generate_vp(atts, verb).strip()
-        
+
         if phrase is not None and len(phrase) > 0:
             return self.sent_aux.substitute(subj=pronoun, a=aux, vp=phrase).strip().capitalize()
         else:

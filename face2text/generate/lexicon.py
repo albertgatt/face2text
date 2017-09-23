@@ -78,10 +78,10 @@ class Attribute(object):
     
     def express(self, syn=True):
         expression = None
-        
+                
         if self.expression:
             expression = self.expression if self.value else 'not ' + self.expression
-                
+   
         else:
             expression = self.__syn_express(syn)
         
@@ -129,7 +129,7 @@ class Lexicaliser(object):
             'Rosy_Cheeks': ('rosy cheeks', 'PP_with', None, 'COMPLEXION', []),
             'Sideburns': ('sideburns', 'PP_with', '01', 'FHAIR', []),
             'Smiling': ('smiling', wn.ADJ, '01', 'EXPRESSION', []),
-            'Straight_Hair': ('straight hair', 'PP_with', None, 'HAIRSTYLE', ['straight']),
+            'Straight_Hair': ('straight hair', 'PP_with', None, 'HAIRSTYLE', ['straight', 'smooth']),
             'Wavy_Hair': ('wavy hair', 'PP_with', None, 'HAIRSTYLE', ['wavy']),
             'Wearing_Hat': ('a hat', 'VP_wearing', None, 'CLOTHING', ['a hat', 'some kind of headgear']),
             'Wearing_Lipstick': ('lipstick', 'VP_wearing', None, 'MAKEUP', []),
@@ -147,16 +147,16 @@ class Lexicaliser(object):
         attributes = {}       
         
         for a in string_atts:
-            v = string_atts[a].strip()
+            v = string_atts[a]
 
             #Non-male gets mapped to female            
-            if a == 'Male' and v == '-1':            
+            if a == 'Male' and v < 0:            
                 attributes['Female'] = Attribute('woman', value=True, category=wn.NOUN, semcat='GENDER')
 
             elif a in ignore_list:
                 continue
 
-            elif v == '-1' and not negations:
+            elif v < 0 and not negations:
                 continue
                         
             elif a in self.attributes:
@@ -177,7 +177,7 @@ class Lexicaliser(object):
                 #for phrasal categories, we use the provided expression or provided syns
                 else:
                     if len(syns)> 0:
-                        attributes[a] = Attribute(a, value=True, category=cat, wn_synset=sense, semcat=semcls, syns=syns)
+                        attributes[a] = Attribute(exp, value=True, category=cat, wn_synset=sense, semcat=semcls, syns=syns)
                     else:
                         attributes[a] = Attribute(a, value=True, category=cat, wn_synset=sense, expression=exp, semcat=semcls)
 
