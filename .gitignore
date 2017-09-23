@@ -100,6 +100,7 @@ tmp/
 
 #Project-specific: cache etc
 */.scrapecache/*
-scratch/*
+*/scratch/*
 ghostdriver.log
 google_scraper.db
+GoogleNews-vectors-negative300.bin
