@@ -19,6 +19,7 @@ class Realiser(object):
         self.vp = Template('$verb $np')
         self.sent_aux = Template('$subj $a $vp.')
         self.poss_sent = Template('$subj $n is $adj.')
+        self.svo_sent = Template('$subj $v $np.')
 
     def conjoin(self, atts):
         atts = [a for a in atts if len(a) > 0]
@@ -148,16 +149,13 @@ class Realiser(object):
             if a in features:
                 atts = atts + features[a]
                 
-        pronoun = 'They'
+        pronoun = self.__pronoun(gender)
         aux = 'are'
         
-        if gender == 'man':
-            pronoun = 'He'
+        if pronoun == 'he':
             aux = 'is'
-        elif gender == 'woman':
-            pronoun = 'She'
+        elif pronoun == 'she':
             aux = 'is'
-
     
         phrase = self.generate_vp(atts, verb).strip()
 
@@ -166,16 +164,7 @@ class Realiser(object):
         else:
             return ''
     
-    def poss_sentence(self, gender, head, features, semtypes):        
-        #self.poss_sent = Template('$subj $n is $adj.')
-        pronoun = 'Their'    
-        
-        if gender == 'man':
-            pronoun = 'His'
-
-        elif gender == 'woman':
-            pronoun = 'Her'
-        
+    def __choose(self, features, semtypes):
         phrases = []
         
         for s in semtypes:
@@ -187,6 +176,26 @@ class Realiser(object):
            
                    if exp and len(exp.strip()) > 0:
                        phrases.append(exp.strip())
+
+        return phrases      
+    
+
+    def __pronoun(self, gender, poss=False):
+         #self.poss_sent = Template('$subj $n is $adj.')
+        pronoun = 'their' if poss else 'they'   
+        
+        if gender == 'man':
+            pronoun = 'his' if poss else 'he'
+
+        elif gender == 'woman':
+            pronoun = 'her' if poss else 'she'
+        
+        return pronoun
+    
+    
+    def poss_sentence(self, gender, head, features, semtypes):        
+        pronoun = self.__pronoun(gender, poss=True)        
+        phrases = self.__choose(features, semtypes)                
  
         if len(phrases) > 0:                           
             sent = self.poss_sent.substitute(subj=pronoun, n=head, adj=self.conjoin(phrases))
@@ -194,6 +203,17 @@ class Realiser(object):
         else:
             return ''
     
+    def svo_sentence(self, gender, verb, features, semtypes):
+        pronoun = self.__pronoun(gender)
+        phrases = self.__choose(features, semtypes)
+        
+        if len(phrases) > 0:                           
+            sent = self.svo_sent.substitute(subj=pronoun, v=verb, np=self.conjoin(phrases))
+            return sent.capitalize()
+        else:
+            return ''
+        
+        
         
             
                 

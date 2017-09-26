@@ -71,7 +71,7 @@ class SimpleGenerator(Generator):
             if a.semcat in features:
                 features[a.semcat].append(a)                
             else:
-                features[a.semcat] = [a]    
+                features[a.semcat] = [a]                                   
             
         #We need to know the gender (determines pronouns and attributes)
         if 'GENDER' in features:
@@ -80,19 +80,23 @@ class SimpleGenerator(Generator):
             gender = 'person'         
         
         #The semantic types included in the first description:
-        premod_types = ['AGE', 'BALDNESS', 'EXPRSSION', 'SHAPE'] #Things we express as premodifiers
+        premod_types = ['AGE', 'BALDNESS', 'EXPRESSION', 'SHAPE'] #Things we express as premodifiers
         postmod_types = ['EYEBROWS', 'MAKEUP'] #Things we express as postmodifiers
         
         #Sentence 2:semantic types
         sent2_types = ['CLOTHING'] 
         
         #Sentence 3: semantic types
-        sent3_types = ['HAIRCOLOUR', 'HAIRSTYLE']
+        sent3_types = ['HAIRLINE', 'HAIRCOLOUR', 'HAIRSTYLE']
+        
+        #Sentence 4: expression
+        sent4_types = ['FHAIR', 'SHAIR', 'COMPLEXION']
                
         np1 = self.realiser.noun_phrase(features, premod_types, postmod_types)
         sent2 = self.realiser.state_sentence(gender, 'wearing', features, sent2_types)
         sent3 = self.realiser.poss_sentence(gender, 'hair', features, sent3_types)
-        return ' '.join( [np1, sent2, sent3] )
+        sent4 = self.realiser.svo_sentence(gender, 'has', features, sent4_types)
+        return ' '.join( [np1, sent2, sent3, sent4] )
         
      
         

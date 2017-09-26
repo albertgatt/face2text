@@ -106,16 +106,16 @@ class Lexicaliser(object):
                 'Wearing_Hat', 'Wearing_Lipstick', 'Wearing_Necktie', 'Young']
         
         self.attributes = {
-            'Male': ('man', wn.NOUN, '01', 'GENDER', []),
-            'Female': ('woman', wn.NOUN, '01', 'GENDER', []),
-            'Bald': ('bald', wn.ADJ, '02', 'BALDNESS', []),
+            'Male': ('man', wn.NOUN, '01', 'GENDER', ['man', 'male']),
+            'Female': ('woman', wn.NOUN, '01', 'GENDER', ['woman', 'female']),
+            'Bald': ('bald', wn.ADJ, '02', 'BALDNESS', ['bald', 'bare-headed', 'bald-pated']),
             'Bangs': ('bangs', 'PP_with', None, None, []),
-            'Black_Hair': ('black hair', 'PP_with', None, 'HAIRCOLOUR', ['dark']),
+            'Black_Hair': ('black hair', 'PP_with', None, 'HAIRCOLOUR', ['dark', 'black']),
             'Blond_Hair': ('blond hair', 'PP_with', None, 'HAIRCOLOUR', ['light', 'light-coloured']),
             'Blurry': ('blurry', wn.ADJ, None, None, []),
-            'Brown_Hair': ('brown hair', 'PP_with', None, 'HAIRCOLOUR', ['dark']),
-            'Bushy_Eyebrows': ('bushy eyebrows', 'PP_with', None, 'EYEBROWS', []),
-            'Chubby': ('chubby', wn.ADJ, '01','SHAPE', []),
+            'Brown_Hair': ('brown hair', 'PP_with', None, 'HAIRCOLOUR', ['dark', 'brown']),
+            'Bushy_Eyebrows': ('bushy eyebrows', 'PP_with', None, 'EYEBROWS', ['bushy eyebrows', 'thick eyebrows', 'luxurious eyebrows']),
+            'Chubby': ('chubby', wn.ADJ, '01','SHAPE', ['chubby', 'plump', 'chubby-cheeked']),
             'Double_Chin': ('double chin', 'PP_with', None, None, []),
             'Eyeglasses': ('glasses', 'VP_wearing', None, 'CLOTHING', ['glasses', 'eyeglasses', 'specs']),
             'Goatee': ('goatee', 'PP_with', None, 'FHAIR', []),
@@ -124,22 +124,23 @@ class Lexicaliser(object):
             'Mustache': ('a moustache', 'PP_with', None, 'FHAIR', []),
             'Narrow_Eyes': ('narrowed eyes', 'PP_with', None, None, []),
             'No_Beard': ('no beard', 'PP_with', None, 'FHAIR', []),
-            'Pale_Skin': ('pale skin', 'PP_with', None, 'COMPLEXION', []),
-            'Receding_Hairline': ('a receding hairline', 'PP_with', None, 'BALDNESS', []),
-            'Rosy_Cheeks': ('rosy cheeks', 'PP_with', None, 'COMPLEXION', []),
-            'Sideburns': ('sideburns', 'PP_with', '01', 'FHAIR', []),
-            'Smiling': ('smiling', wn.ADJ, '01', 'EXPRESSION', []),
+            'Pale_Skin': ('pale skin', 'VP_have', None, 'COMPLEXION', ['pale skin', 'a light complexion']),
+            'Receding_Hairline': ('a receding hairline', 'PP_with', None, 'HAIRLINE', ['receding', 'thinning', 'sparse']),
+            'Rosy_Cheeks': ('rosy cheeks', 'PP_with', None, 'COMPLEXION', ['rosy cheeks']),
+            'Sideburns': ('sideburns', 'PP_with', '01', 'SHAIR', []),
+            'Smiling': ('smiling', wn.ADJ, '01', 'EXPRESSION', ['smiling', 'grinning']),
             'Straight_Hair': ('straight hair', 'PP_with', None, 'HAIRSTYLE', ['straight', 'smooth']),
             'Wavy_Hair': ('wavy hair', 'PP_with', None, 'HAIRSTYLE', ['wavy']),
             'Wearing_Hat': ('a hat', 'VP_wearing', None, 'CLOTHING', ['a hat', 'some kind of headgear']),
             'Wearing_Lipstick': ('lipstick', 'VP_wearing', None, 'MAKEUP', []),
             'Wearing_Necktie': ('a tie', 'VP_wearing', None, 'CLOTHING', ['a tie', 'a necktie', 'something around the neck']),
-            'Young': ('young', wn.ADJ, None,'AGE', []),
+            'Young': ('young', wn.ADJ, None,'AGE', ['young', 'youngish', 'younger-looking', 'youthful']),
             }
         
         #Dictionary that specifies which attributes are excluded by the presence of others
-        self.exclusion = {'Female':['Bald', 'Beard', 'Mustache', 'Goatee', 'Receding_Hairline', 'No_Beard'],
-                             'Male': ['Bangs', 'Heavy_Makeup', 'Wearing_Lipstick']}
+        self.exclusion = {'Female':['Bald', 'Beard', 'Mustache', 'Goatee', 'Receding_Hairline', 'No_Beard', 'Sideburns'],
+                             'Male': ['Bangs', 'Heavy_Makeup', 'Wearing_Lipstick'], 
+                             'Receding_Hairline': ['Bald']}
 
 
     def lexicalise(self, string_atts, ignore_list=[], negations=False):
