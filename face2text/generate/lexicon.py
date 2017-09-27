@@ -118,7 +118,7 @@ class Lexicaliser(object):
             'Chubby': ('chubby', wn.ADJ, '01','SHAPE', ['chubby', 'plump', 'chubby-cheeked']),
             'Double_Chin': ('double chin', 'PP_with', None, None, []),
             'Eyeglasses': ('glasses', 'VP_wearing', None, 'CLOTHING', ['glasses', 'eyeglasses', 'specs']),
-            'Goatee': ('goatee', 'PP_with', None, 'FHAIR', []),
+            'Goatee': ('goatee', 'PP_with', None, 'FHAIR', ['a goatee']),
             'Gray_Hair': ('grey hair', 'PP_with', None, 'HAIRCOLOUR', ['grey', 'greying']),
             'Heavy_Makeup': ('heavy makeup', 'VP_wearing', None, 'MAKEUP', ['makeup']),
             'Mustache': ('a moustache', 'PP_with', None, 'FHAIR', []),
@@ -140,7 +140,8 @@ class Lexicaliser(object):
         #Dictionary that specifies which attributes are excluded by the presence of others
         self.exclusion = {'Female':['Bald', 'Beard', 'Mustache', 'Goatee', 'Receding_Hairline', 'No_Beard', 'Sideburns'],
                              'Male': ['Bangs', 'Heavy_Makeup', 'Wearing_Lipstick'], 
-                             'Receding_Hairline': ['Bald']}
+                             'Receding_Hairline': ['Bald'],
+                             'Bald': ['Black_Hair', 'Blond_Hair', 'Brown_Hair', 'Gray_Hair', 'Wavy_Hair', 'Straight_Hair']}
 
 
     def lexicalise(self, string_atts, ignore_list=[], negations=False):
