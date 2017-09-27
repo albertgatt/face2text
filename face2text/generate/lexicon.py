@@ -120,7 +120,7 @@ class Lexicaliser(object):
             'Eyeglasses': ('glasses', 'VP_wearing', None, 'CLOTHING', ['glasses', 'eyeglasses', 'specs']),
             'Goatee': ('goatee', 'PP_with', None, 'FHAIR', []),
             'Gray_Hair': ('grey hair', 'PP_with', None, 'HAIRCOLOUR', ['grey', 'greying']),
-            'Heavy_Makeup': ('heavy makeup', 'VP_wearing', None, 'MAKEUP', []),
+            'Heavy_Makeup': ('heavy makeup', 'VP_wearing', None, 'MAKEUP', ['makeup']),
             'Mustache': ('a moustache', 'PP_with', None, 'FHAIR', []),
             'Narrow_Eyes': ('narrowed eyes', 'PP_with', None, None, []),
             'No_Beard': ('no beard', 'PP_with', None, 'FHAIR', []),
